@@ -1,33 +1,41 @@
 class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
-        List<List<Integer>> res = new ArrayList<>();
+    
         Arrays.sort(nums);
+        return kSum(nums, 0, 3, 0);
+    }
 
-        for (int i = 0; i < nums.length; i++) {
-            if (i > 0 && nums[i] == nums[i-1]) {
-                continue;
-            }
-            
-            int j = i + 1;
-            int k = nums.length - 1;
+    private List<List<Integer>> kSum(int[] nums, long target, int k, int start) {
+        List<List<Integer>> res = new ArrayList<>();
 
-            while (j < k) {
-                int total = nums[i] + nums[j] + nums[k];
-
-                if (total > 0) {
-                    k--;
-                } else if (total < 0) {
-                    j++;
-                } else {
-                    res.add(Arrays.asList(nums[i], nums[j], nums[k]));
-                    j++;
-
-                    while (nums[j] == nums[j-1] && j < k) {
-                        j++;
-                    }
+        // Base case: 2Sum
+        if (k == 2) {
+            int left = start, right = nums.length - 1;
+            while (left < right) {
+                long sum = (long) nums[left] + nums[right];
+                if (sum < target) left++;
+                else if (sum > target) right--;
+                else {
+                    res.add(Arrays.asList(nums[left], nums[right]));
+                    left++;
+                    while (left < right && nums[left] == nums[left - 1]) left++;
                 }
             }
+            return res;
         }
-        return res;        
+
+        // Recursive case: reduce k
+        for (int i = start; i < nums.length - k + 1; i++) {
+            if (i > start && nums[i] == nums[i - 1]) continue;
+            List<List<Integer>> temp = kSum(nums, target - nums[i], k - 1, i + 1);
+            for (List<Integer> t : temp) {
+                List<Integer> quad = new ArrayList<>();
+                quad.add(nums[i]);
+                quad.addAll(t);
+                res.add(quad);
+            }
+        }
+
+        return res;
     }
 }
