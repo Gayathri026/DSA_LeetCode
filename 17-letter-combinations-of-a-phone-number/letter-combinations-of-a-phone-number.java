@@ -1,39 +1,21 @@
 class Solution {
-
-    List<String> result = new ArrayList<>();
-
     public List<String> letterCombinations(String digits) {
+        if (digits.isEmpty()) return Collections.emptyList();
 
-        if (digits.length() == 0)
-            return result;
-
-        String[] map = {
-            "abc",   
-            "def",   
-            "ghi",   
-            "jkl",   
-            "mno",   
-            "pqrs",  
-            "tuv",   
-            "wxyz"   
-        };
-
-        backtrack(0, digits, "", map);
-        return result;
+        String[] phone_map = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> output = new ArrayList<>();
+        backtrack("", digits, phone_map, output);
+        return output;
     }
 
-    void backtrack(int index, String digits, String current, String[] map) {
-        if (index == digits.length()) {
-            result.add(current);
-            return;
-        }
-        int digit = digits.charAt(index) - '2';
-        String letters = map[digit];
-        for (int i = 0; i < letters.length(); i++) {
-            backtrack(index + 1,
-                      digits,
-                      current + letters.charAt(i),
-                      map);
+    private void backtrack(String combination, String next_digits, String[] phone_map, List<String> output) {
+        if (next_digits.isEmpty()) {
+            output.add(combination);
+        } else {
+            String letters = phone_map[next_digits.charAt(0) - '2'];
+            for (char letter : letters.toCharArray()) {
+                backtrack(combination + letter, next_digits.substring(1), phone_map, output);
+            }
         }
     }
 }
